@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chilli Hub V8</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Oxanium:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+:root {
+    --red: #ff1744;
+    --red-light: #ff4569;
+    --dark: #050505;
+}
+
+body {
+    min-height: 100vh;
+    background: #050505;
+    color: white;
+    font-family: 'Oxanium', sans-serif;
+    overflow-x: hidden;
+}
+
+/* BACKGROUND */
+
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background:
+        radial-gradient(circle at 20% 30%, #ff003c25, transparent 40%),
+        radial-gradient(circle at 80% 80%, #ff174415, transparent 40%),
+        #050505;
+}
+
+.grid {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image:
+        linear-gradient(#ff17440a 1px, transparent 1px),
+        linear-gradient(90deg, #ff17440a 1px, transparent 1px);
+    background-size: 45px 45px;
+    animation: gridMove 20s linear infinite;
+    mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+#particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* NAVBAR */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 7%;
+    background: #080808cc;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #ff174430;
+    animation: navbarEnter .8s ease both;
+}
+
+.brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    animation: brandGlow 3s infinite alternate;
+}
+
+.brand span {
+    color: var(--red);
+}
+
+.online {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: #aaa;
+}
+
+.dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 15px var(--red);
+    animation: blink 1.5s infinite;
+}
+
+/* MAIN */
+
+.main {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 480px;
+    animation: entrance 1.1s cubic-bezier(.16,1,.3,1) both;
+}
+
+/* TITLE */
+
+.title {
+    text-align: center;
+    margin-bottom: 38px;
+}
+
+.title h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(30px, 7vw, 48px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(
+        180deg,
+        #fff 0%,
+        #ff8198 40%,
+        #ff1744 100%
+    );
+    background-size: 100% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px #ff174450);
+    animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+.title p {
+    margin-top: 15px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 7px;
+    color: #777;
+    animation: subtitleEnter 1.5s ease both;
+}
+
+/* MENU */
+
+.menu {
+    position: relative;
+    isolation: isolate;
+    padding: 32px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #14090d, #070707);
+    border: 1px solid #ff174440;
+    transform-style: preserve-3d;
+    overflow: hidden;
+    animation: menuFloat 6s ease-in-out infinite;
+    transition: box-shadow .4s, border-color .4s;
+    box-shadow:
+        0 0 35px #ff174415,
+        inset 0 0 35px #ff174405;
+}
+
+/* ROTATING NEON BORDER */
+
+.menu::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+        from var(--angle),
+        transparent 0%,
+        #ff1744 12%,
+        #ff8198 20%,
+        transparent 35%,
+        transparent 60%,
+        #ff1744 75%,
+        transparent 100%
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    animation: borderRotate 4s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* LIGHT SCANNER */
+
+.menu::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        115deg,
+        transparent 40%,
+        #ff174408 48%,
+        #ff174420 50%,
+        #ff174408 52%,
+        transparent 60%
+    );
+    animation: menuScanner 6s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.menu:hover {
+    border-color: #ff1744;
+    box-shadow:
+        0 0 45px #ff174430,
+        inset 0 0 30px #ff174410;
+}
+
+/* MENU HEADER */
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.menu-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    animation: headingPulse 3s infinite;
+}
+
+.badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 7px 12px;
+    color: #ff4569;
+    border: 1px solid #ff174450;
+    border-radius: 5px;
+    background: #ff174410;
+    animation: badgePulse 2s infinite;
+}
+
+/* KEY */
+
+.label {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+.key-box {
+    position: relative;
+    overflow: hidden;
+    background: #050505;
+    border: 1px solid #48202a;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+    color: #ff7189;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.7;
+    word-break: break-all;
+    box-shadow: inset 0 0 20px #ff174408;
+    animation: keyGlow 3s ease-in-out infinite;
+    transition: .4s;
+}
+
+.key-box:hover {
+    border-color: #ff1744;
+    transform: scale(1.02);
+    box-shadow: 0 0 25px #ff174425;
+}
+
+/* KEY LASER */
+
+.key-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+        100deg,
+        transparent,
+        #ff174430,
+        #ffffff25,
+        transparent
+    );
+    transform: skewX(-25deg);
+    animation: keyScan 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* COPY BUTTON */
+
+.button {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 17px;
+    border: 1px solid #ff4569;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #ff1744, #a90025);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: .35s;
+    box-shadow: 0 0 20px #ff174425;
+    animation: buttonPulse 3s ease-in-out infinite;
+}
+
+.button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #ffffff55,
+        transparent
+    );
+    transform: translateX(-100%);
+}
+
+.button:hover::before {
+    animation: buttonShine .8s ease;
+}
+
+.button:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.2);
+    box-shadow: 0 0 40px #ff174460;
+    letter-spacing: 4px;
+}
+
+.button:active {
+    transform: scale(.96);
+}
+
+/* STATUS */
+
+.status {
+    text-align: center;
+    margin-top: 20px;
+    min-height: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #777;
+    transition: .3s;
+}
+
+.status.success {
+    color: #ff4569;
+    text-shadow: 0 0 15px #ff174450;
+}
+
+/* FOOTER */
+
+.footer {
+    margin-top: 28px;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #555;
+}
+
+.footer span {
+    color: #ff1744;
+}
+
+/* ANIMATIONS */
+
+@keyframes entrance {
+    from {
+        opacity: 0;
+        transform: perspective(1000px) rotateX(15deg) translateY(60px) scale(.9);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(0) translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes navbarEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes brandGlow {
+    to {
+        text-shadow: 0 0 20px #ff174480;
+    }
+}
+
+@keyframes titleGlow {
+    from {
+        filter: drop-shadow(0 0 10px #ff174430);
+    }
+    to {
+        filter: drop-shadow(0 0 30px #ff174490);
+    }
+}
+
+@keyframes subtitleEnter {
+    from {
+        opacity: 0;
+        letter-spacing: 15px;
+    }
+    to {
+        opacity: 1;
+        letter-spacing: 7px;
+    }
+}
+
+@keyframes menuFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes borderRotate {
+    to { --angle: 360deg; }
+}
+
+@keyframes menuScanner {
+    0% { transform: translateY(-100%) rotate(0); }
+    100% { transform: translateY(100%) rotate(0); }
+}
+
+@keyframes headingPulse {
+    0%, 100% {
+        text-shadow: 0 0 5px #ff174420;
+    }
+    50% {
+        text-shadow: 0 0 20px #ff174480;
+    }
+}
+
+@keyframes badgePulse {
+    50% {
+        box-shadow: 0 0 20px #ff174430;
+    }
+}
+
+@keyframes keyGlow {
+    0%, 100% {
+        box-shadow: inset 0 0 15px #ff174405;
+    }
+    50% {
+        box-shadow: inset 0 0 25px #ff174415;
+    }
+}
+
+@keyframes keyScan {
+    0% { left: -150%; }
+    70%, 100% { left: 150%; }
+}
+
+@keyframes buttonPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px #ff174420;
+    }
+    50% {
+        box-shadow: 0 0 30px #ff174450;
+    }
+}
+
+@keyframes buttonShine {
+    to { transform: translateX(100%); }
+}
+
+@keyframes blink {
+    50% { opacity: .3; }
+}
+
+@keyframes gridMove {
+    to { background-position: 45px 45px; }
+}
+
+/* MOBILE */
+
+@media(max-width: 480px) {
+    .navbar {
+        padding: 18px 5%;
+    }
+
+    .brand {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+
+    .online {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .menu {
+        padding: 23px;
+    }
+
+    .title h1 {
+        letter-spacing: 1px;
+    }
+}
+
+/* REDUCE MOTION */
+
+@media(prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="grid"></div>
+<canvas id="particles"></canvas>
+
+<nav class="navbar">
+    <div class="brand">CHILLI <span>HUB V8</span></div>
+
+    <div class="online">
+        <span class="dot"></span>SYSTEM ONLINE
+    </div>
+</nav>
+
+<main class="main">
+<div class="wrapper">
+
+    <div class="title">
+        <h1>CHILLI HUB V8</h1>
+        <p>PREMIUM KEY SYSTEM</p>
+    </div>
+
+    <div class="menu">
+
+        <div class="menu-header">
+            <h2>KEY ACCESS</h2>
+            <div class="badge">VERSION 8.0</div>
+        </div>
+
+        <label class="label">YOUR ACCESS KEY</label>
+
+        <div class="key-box" id="key">
+            ChilliHubV8KeyKsjwowowoj - Kalwojwnwkeoejeno
+        </div>
+
+        <button class="button" onclick="copyKey()">
+            COPY ACCESS KEY
+        </button>
+
+        <div class="status" id="status">
+            READY TO ACCESS CHILLI HUB V8
+        </div>
+
+    </div>
+
+    <div class="footer">
+        POWERED BY <span>CHILLI HUB</span> • 2026
+    </div>
+
+</div>
+</main>
+
+<script>
+// COPY KEY
+
+function copyKey() {
+    const key = document.getElementById("key").innerText.trim();
+    const status = document.getElementById("status");
+
+    navigator.clipboard.writeText(key).then(() => {
+        status.innerText = "✓ KEY COPIED SUCCESSFULLY";
+        status.classList.add("success");
+    }).catch(() => {
+        status.innerText = "PLEASE COPY THE KEY MANUALLY";
+    });
+}
+
+// PARTICLES
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+const count = window.innerWidth < 600 ? 25 : 65;
+
+for (let i = 0; i < count; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + .5,
+        speed: Math.random() * .8 + .2,
+        alpha: Math.random() * .6 + .2
+    });
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.y -= p.speed;
+        p.x += Math.sin(p.y * .01) * .3;
+
+        if (p.y < -10) {
+            p.y = canvas.height + 10;
+            p.x = Math.random() * canvas.width;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,23,68,${p.alpha})`;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#ff1744";
+        ctx.fill();
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+// 3D MOUSE EFFECT
+
+const menu = document.querySelector(".menu");
+
+if (window.matchMedia("(hover: hover)").matches) {
+    menu.addEventListener("mousemove", e => {
+        const rect = menu.getBoundingClientRect();
+
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+
+        menu.style.transform =
+            `perspective(1000px)
+             rotateX(${(0.5 - y) * 5}deg)
+             rotateY(${(x - 0.5) * 5}deg)
+             translateY(-5px)`;
+    });
+
+    menu.addEventListener("mouseleave", () => {
+        menu.style.transform = "";
+    });
+}
+</script>
+
+</body>
+</html>
